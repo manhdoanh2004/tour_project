@@ -1,0 +1,29 @@
+extends ../layouts/default.pug
+
+
+
+block main
+  h1.box-title Sửa nhóm quyền
+  if (permissions.includes("setting-role-edit"))
+    .section-8
+      form#setting-role-edit-form
+        .inner-group(style="display:none")
+          label(class="inner-label" for="id") Id
+          input(type="text" id="id" name="id" value=record.id)
+        .inner-group
+          label(class="inner-label" for="name") Tên nhóm quyền
+          input(type="text" id="name" name="name" value=record.name)
+        .inner-group
+          label(class="inner-label" for="description") Mô tả ngắn
+          input(type="text" id="description" name="description" value=record.description)
+        .inner-group
+          label(class="inner-label") Phân quyền
+          .inner-checkbox-list
+            each item in premissonList
+              .inner-checkbox-item
+                input(type="checkbox" name="permissions" value=item.value    checked=record.permissions.includes(item.value))
+                label #{item.label}
+        .inner-button.inner-two-col
+          button Cập nhật
+      .inner-back
+        a(href=`/${pathAdmin}/setting/role/list` ) Quay lại danh sách

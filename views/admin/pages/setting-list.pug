@@ -1,0 +1,21 @@
+extends ../layouts/default.pug
+
+
+block main
+  h1.box-title Cài đặt chung
+  if (permissions.includes("setting-list"))
+    //- Section 9
+    .section-9
+      if (permissions.includes("setting-websiteinfo"))
+        a(href=`/${pathAdmin}/setting/website-infor` class="inner-item")
+          .inner-icon <i class="fa-solid fa-info"></i>
+          .inner-text Thông tin website
+      if (permissions.includes("account-admin-list"))
+        a(href=`/${pathAdmin}/setting/account-admin/list` class="inner-item")
+          .inner-icon <i class="fa-solid fa-user-tie"></i>
+          .inner-text Tài khoản quản trị
+      if (permissions.includes("setting-role-list"))
+        a(href=`/${pathAdmin}/setting/role/list` class="inner-item")
+          .inner-icon <i class="fa-solid fa-user-gear"></i>
+          .inner-text Nhóm quyền
+    //- End Section 9

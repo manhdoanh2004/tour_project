@@ -1,0 +1,14 @@
+mixin box-BreadCrum(breadCrumb)
+ .box-breadcrumb
+  .inner-image
+    img(
+      alt="" 
+      src=breadCrumb.image
+      )
+  .inner-content
+    .container
+      h1.inner-title #{breadCrumb.title}
+      .inner-list
+        each item in breadCrumb.list
+          a(href=item.link) #{item.title}
+  // End Breadcrumb

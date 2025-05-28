@@ -1,0 +1,284 @@
+extends ../layouts/default.pug
+include ../mixins/box-breadcrum.pug
+block main
+ +box-BreadCrum(breadCrumb)
+    //Section 9
+ .section-9
+  .container
+    .inner-wrap
+      .inner-left
+        // Box Filter
+        .box-filter
+          .inner-head
+            .inner-title Bộ Lọc
+            i.fa-solid.fa-filter
+          .inner-body
+            .inner-group
+              .inner-label Điểm đi
+              select(name="locationFrom")
+                option(value="") -- Chọn điểm đi --
+                each item in cityList
+                  option(value=item.id) #{item.name}
+            .inner-group
+              .inner-label Điểm đến
+              select(name="locationTo")
+                option(value="") -- Chọn điểm đến --
+                each item in cityList
+                  option(value=item.name) #{item.name}
+            .inner-group
+              .inner-label Ngày khởi hành
+              input(type="date" name="departureDate")
+            .inner-group
+              .inner-label Số Lượng Hành Khách
+              .inner-input-list
+                .inner-input-item
+                  .inner-label Người lớn:
+                  input(
+                    value="0" 
+                    type="number"
+                    name="stockAdult"
+                    )
+                .inner-input-item
+                  .inner-label Trẻ em:
+                  input(
+                    value="0" 
+                    type="number"
+                    name="stockChildren"
+                    )
+                .inner-input-item
+                  .inner-label Em bé:
+                  input(
+                    value="0" 
+                    type="number"
+                    name="stockBaby"
+                    )
+            .inner-group
+              .inner-label Mức giá
+              select(name="price")
+                option(value="") -- Chọn khoảng giá --
+                option(value="0-999999") Dưới 1tr
+                option(value="1000000-3000000") Từ 1tr đến 3tr
+                option(value="3000000-6000000") Từ 3tr đến 6tr
+                option(value="6000000-10000000") Từ 6tr đến 10tr
+                option(value="10000000-1000000000") Trên 10tr
+            .inner-group
+              button.inner-button Áp Dụng
+        .inner-overlay
+        // End Box Filter
+      .inner-right
+        .inner-info
+          h2.inner-title #{category.name}
+          .inner-desc
+            | !{category.description}
+        .inner-info-2
+          .inner-sort
+            .inner-label Sắp xếp:
+            .inner-list
+              button
+                | Giá tăng dần
+                i.fa-solid.fa-square-caret-up
+              button
+                | Giá giảm dần
+                i.fa-solid.fa-square-caret-down
+              button.active
+                | Khuyến Mại Hot
+                i.fa-solid.fa-tag
+              button
+                | Xem Nhiều
+                i.fa-solid.fa-eye
+          .inner-count-record
+            | Tất cả:
+            b #{totalTour} Tour
+          button.inner-filter-mobile
+            span.inner-title Bộ Lọc
+            i.fa-solid.fa-filter
+        .inner-list-tour
+          each item in tourList
+            -
+              const discount =parseInt(((item.priceAdult - item.priceNewAdult) / item.priceAdult)*100 )
+            .product-item
+                      .inner-image
+                        a(href=`/tour/detail/${item.slug}`)
+                          img(
+                            alt=item.name 
+                            src=item.avatar
+                            )
+                      .inner-discount
+                        i.fa-solid.fa-bolt
+                        | Giảm -#{discount}%
+                      .inner-content
+                        h3.inner-title
+                          a(href=`/tour/detail/${item.slug}`) #{item.name }
+                        .inner-prices
+                          .inner-price-old
+                            | #{item.priceAdult.toLocaleString("vi-VN")}
+                            span.inner-unit đ
+                          .inner-price-new
+                            |  #{item.priceNewAdult.toLocaleString("vi-VN")}
+                            span.inner-unit đ
+                        .inner-desc
+                          .inner-desc-item
+                            | Mã Tour:
+                            b 123456789
+                          .inner-desc-item
+                            | Ngày Khởi Hành:
+                            b #{item.departureDateFormat}
+                          .inner-desc-item
+                            | Thời Gian:
+                            b #{item.time}
+                        .inner-meta
+                          .inner-rating
+                            .inner-stars
+                              i.fa-solid.fa-star
+                              i.fa-solid.fa-star
+                              i.fa-solid.fa-star
+                              i.fa-solid.fa-star
+                              i.fa-solid.fa-star
+                            .inner-number (5)
+                          .inner-stock
+                            .inner-label Số chỗ còn:
+                            .inner-number #{item.stockAdult}
+          //- // Product Item
+          //- .product-item
+          //-   .inner-image
+          //-     a(href="")
+          //-       img(
+          //-         alt="" 
+          //-         src="/assets/images/product-1.jpg"
+          //-         )
+          //-   .inner-discount
+          //-     i.fa-solid.fa-bolt
+          //-     | Giảm -30%
+          //-   .inner-content
+          //-     h3.inner-title
+          //-       a(href="") Hà Nội - Lào Cai - SaPa 4N3Đ
+          //-     .inner-prices
+          //-       .inner-price-old
+          //-         | 13.650.000
+          //-         span.inner-unit đ
+          //-       .inner-price-new
+          //-         | 2.590.000
+          //-         span.inner-unit đ
+          //-     .inner-desc
+          //-       .inner-desc-item
+          //-         | Mã Tour:
+          //-         b 123456789
+          //-       .inner-desc-item
+          //-         | Ngày Khởi Hành:
+          //-         b 22/07/2024
+          //-       .inner-desc-item
+          //-         | Thời Gian:
+          //-         b 10 Ngày 9 Đêm
+          //-     .inner-meta
+          //-       .inner-rating
+          //-         .inner-stars
+          //-           i.fa-solid.fa-star
+          //-           i.fa-solid.fa-star
+          //-           i.fa-solid.fa-star
+          //-           i.fa-solid.fa-star
+          //-           i.fa-solid.fa-star
+          //-         .inner-number (5)
+          //-       .inner-stock
+          //-         .inner-label Số chỗ còn:
+          //-         .inner-number 10
+          //- // End Product Item
+          //- // Product Item
+          //- .product-item
+          //-   .inner-image
+          //-     a(href="")
+          //-       img(
+          //-         alt="" 
+          //-         src="/assets/images/product-2.jpg"
+          //-         )
+          //-   .inner-discount
+          //-     i.fa-solid.fa-bolt
+          //-     | Giảm -30%
+          //-   .inner-content
+          //-     h3.inner-title
+          //-       a(href="") Tour 2024 Phú Quốc - Thiên Đường Đảo Ngọc (3N2D)
+          //-     .inner-prices
+          //-       .inner-price-old
+          //-         | 13.650.000
+          //-         span.inner-unit đ
+          //-       .inner-price-new
+          //-         | 2.590.000
+          //-         span.inner-unit đ
+          //-     .inner-desc
+          //-       .inner-desc-item
+          //-         | Mã Tour:
+          //-         b 123456789
+          //-       .inner-desc-item
+          //-         | Ngày Khởi Hành:
+          //-         b 22/07/2024
+          //-       .inner-desc-item
+          //-         | Thời Gian:
+          //-         b 10 Ngày 9 Đêm
+          //-     .inner-meta
+          //-       .inner-rating
+          //-         .inner-stars
+          //-           i.fa-solid.fa-star
+          //-           i.fa-solid.fa-star
+          //-           i.fa-solid.fa-star
+          //-           i.fa-solid.fa-star
+          //-           i.fa-solid.fa-star
+          //-         .inner-number (5)
+          //-       .inner-stock
+          //-         .inner-label Số chỗ còn:
+          //-         .inner-number 10
+          //- // End Product Item
+          //- // Product Item
+          //- .product-item
+          //-   .inner-image
+          //-     a(href="")
+          //-       img(
+          //-         alt="" 
+          //-         src="/assets/images/product-3.jpg"
+          //-         )
+          //-   .inner-discount
+          //-     i.fa-solid.fa-bolt
+          //-     | Giảm -30%
+          //-   .inner-content
+          //-     h3.inner-title
+          //-       a(href="") Combo Đà Nẵng 2024: ĐÀ NẴNG - HỘI AN - BÀ NÀ HILL
+          //-     .inner-prices
+          //-       .inner-price-old
+          //-         | 13.650.000
+          //-         span.inner-unit đ
+          //-       .inner-price-new
+          //-         | 2.590.000
+          //-         span.inner-unit đ
+          //-     .inner-desc
+          //-       .inner-desc-item
+          //-         | Mã Tour:
+          //-         b 123456789
+          //-       .inner-desc-item
+          //-         | Ngày Khởi Hành:
+          //-         b 22/07/2024
+          //-       .inner-desc-item
+          //-         | Thời Gian:
+          //-         b 10 Ngày 9 Đêm
+          //-     .inner-meta
+          //-       .inner-rating
+          //-         .inner-stars
+          //-           i.fa-solid.fa-star
+          //-           i.fa-solid.fa-star
+          //-           i.fa-solid.fa-star
+          //-           i.fa-solid.fa-star
+          //-           i.fa-solid.fa-star
+          //-         .inner-number (5)
+          //-       .inner-stock
+          //-         .inner-label Số chỗ còn:
+          //-         .inner-number 10
+          //- // End Product Item
+        // Pagination
+        .box-pagination
+          button
+            i.fa-solid.fa-angles-left
+          button.active 1
+          button 2
+          button 3
+          button 4
+          button
+            i.fa-solid.fa-angles-right
+        // End Pagination
+    // End Section 9
