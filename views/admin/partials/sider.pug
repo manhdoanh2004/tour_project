@@ -15,6 +15,9 @@ nav.sider
     if (permissions.includes("user-list"))
       li
         a(href=`/${pathAdmin}/user/list` class="") <i class="fa-solid fa-user"></i> Quản lý người dùng
+    if (permissions.includes("coupon-list"))
+      li
+        a(href=`/${pathAdmin}/coupon/list` class="") <i class="fa-solid fa-ticket"></i> Quản lý phiếu giảm giá
     if (permissions.includes("contact-list"))
       li
         a(href=`/${pathAdmin}/contact/list` class="") <i class="fa-solid fa-user-group"></i> Thông tin liên hệ

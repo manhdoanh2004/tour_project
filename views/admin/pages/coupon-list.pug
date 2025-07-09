@@ -1,0 +1,84 @@
+extends ../layouts/default.pug
+
+
+block main
+  h1.box-title Danh sách phiếu giảm giá
+  if (permissions.includes("coupon-list"))
+    //- Section 4
+    //- .section-4
+    //-   .inner-wrap
+    //-     .inner-item.inner-label
+    //-       <i class="fa-solid fa-filter"></i> Bộ lọc
+    //-     .inner-item
+    //-       select(filter-status)
+    //-         option(value="") Trạng thái
+    //-         each item in statusList
+    //-           option(value=item.value) #{item.label}
+    //-     .inner-item.inner-date
+    //-       input(type="date" filter-start-date)
+    //-       span -
+    //-       input(type="date" filter-end-date)
+    //-     .inner-item
+    //-       select(filter-payment-method)
+    //-         option(value="") Phương thức thanh toán
+    //-         each item in paymentMethodList
+    //-           option(value=item.value) #{item.label}
+    //-     .inner-item
+    //-       select(filter-payment-status)
+    //-         option(value="") Trạng thái thanh toán
+    //-         each item in paymentStatusList
+    //-           option(value=item.value) #{item.label}
+    //-     .inner-item.inner-reset(filter-reset)
+    //-       <i class="fa-solid fa-rotate-left"></i> Xóa bộ lọc
+    //- //- End Section 4
+
+    //- Section 5
+    .section-5
+      .inner-wrap
+        .inner-search
+          <i class="fa-solid fa-magnifying-glass"></i>
+          input(type="text" placeholder="Tìm kiếm" search)
+        if (permissions.includes("coupon-create"))
+          .inner-button-create
+            a( href=`/${pathAdmin}/coupon/create`) + Tạo mới
+    //- End Section 5
+
+    //- Section 6
+    .section-6
+      .table-2
+        table
+          thead
+            tr
+              th Mã coupon
+              th Tên sự kiện
+              th % giảm giá
+              th Giảm tối đa
+              th số lượng còn lại
+              th(class="inner-center") Ngày tạo
+              th Ngày hết hạn
+          tbody
+           each coupon in couponList
+            tr
+              td
+                .inner-code #{coupon.couponCode}
+              td
+                div #{coupon.name}
+              td
+                div #{coupon.percent}%
+              td
+                div  #{coupon.maximumPrice.toLocaleString("vi-VN")}đ
+              td
+                div #{coupon.quantity}
+              td(class="inner-center")
+                 div #{coupon.createdAtFormat}
+              td
+                 div #{coupon.expiredFormat}
+    //- End Section 6
+
+    //Section
+    .section-7
+      span(class="inner-label") Hiển thị #{skip + 1} - #{(skip + limitItem)>totalRecord? totalRecord : (skip + limitItem) } của #{totalRecord}
+      select(class="inner-pagination" pagination)
+        - for(let i=1;i<=totalPage;i++)
+            option(value=i) Trang #{i}
+    //- End Section 7

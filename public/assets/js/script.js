@@ -26,6 +26,32 @@ if (buttonMenuMobile) {
 }
 // End Menu Mobile
 
+//Active header
+document.addEventListener('DOMContentLoaded', function() {
+  const currentPath = window.location.pathname; 
+  const currentPathArray=currentPath.split("/");
+ 
+  // Lấy tất cả các liên kết trong menu
+  const navLinks = document.querySelectorAll('.header .inner-menu ul li a');
+ 
+  navLinks.forEach(link => {
+    const linkPath = new URL(link.href).pathname; // Lấy pathname từ href của liên kết
+
+    const linkPathArray=linkPath.split("/");
+  
+    // So sánh đường dẫn. Có thể cần điều chỉnh để khớp chính xác hoặc một phần
+    if (currentPathArray[1]==linkPathArray[1]&&currentPathArray[2]==linkPathArray[2]) 
+    {
+      link.classList.add('active'); // Thêm class 'active' nếu khớp
+    }
+    else
+    {
+        link.classList.remove('active'); 
+    }
+  });
+});
+//End Active header
+
 // Box Address Section 1
 const boxAddressSection1 = document.querySelector(
   ".section-1 .inner-form .inner-box.inner-address"
@@ -289,6 +315,57 @@ if (boxTourSchedule) {
   new Viewer(boxTourSchedule);
 }
 // End Box Tour Schedule
+// Coupon Form
+const couponForm = document.querySelector("#coupon-form");
+if (couponForm) {
+  const validation = new JustValidate("#coupon-form");
+
+  validation.onSuccess((event) => {
+    const coupon = event.target.coupon.value;
+
+    const dataFinal={
+      coupon:coupon
+    }
+    fetch(`/coupon/detail`,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify(dataFinal)
+    })
+      .then(res=>res.json())
+      .then(data=>{
+        if(data.code=="success") 
+        {
+          //Nếu chưa tồn tại coupon trong sessionStorage thì set và load lại trang
+          if(!sessionStorage.getItem("coupon"))
+          {
+              sessionStorage.setItem("coupon",JSON.stringify(data.couponDetail));
+              window.location.reload();
+          }
+          else
+          {
+            //Nếu mã coupon người dùng mới nhập khác với mã coupon đang được lưu thì set lại và load lại trang
+            const couponDetail=JSON.parse(sessionStorage.getItem("coupon"));
+            if(couponDetail.couponCode!=data.couponDetail.couponCode&&
+              couponDetail.maximumPrice!=data.couponDetail.maximumPrice&&
+              couponDetail.percent!=data.couponDetail.percent)
+            {
+              sessionStorage.setItem("coupon",JSON.stringify(data.couponDetail));
+              window.location.reload();
+            }
+            else sessionStorage.setItem("coupon",JSON.stringify(data.couponDetail));
+          }
+          
+        
+        }
+        else alert(data.message)
+
+      })
+   
+  });
+}
+// End Coupon Form
 
 // Email Form
 const emailForm = document.querySelector("#email-form");
@@ -330,17 +407,6 @@ if (emailForm) {
 }
 // End Email Form
 
-// Coupon Form
-const couponForm = document.querySelector("#coupon-form");
-if (couponForm) {
-  const validation = new JustValidate("#coupon-form");
-
-  validation.onSuccess((event) => {
-    const coupon = event.target.coupon.value;
-    console.log(coupon);
-  });
-}
-// End Email Form
 
 // Order Form
 const orderForm = document.querySelector("#order-form");
@@ -375,11 +441,31 @@ if (orderForm) {
         errorMessage: "Số điện thoại không đúng định dạng!",
       },
     ])
+    .addField("#email-input", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập email!",
+      },
+      {
+        rule: "email",
+        errorMessage: "Email không đúng định dạng!",
+      },
+    ])
     .onSuccess((event) => {
       const fullName = event.target.fullName.value;
       const phone = event.target.phone.value;
       const note = event.target.note.value;
       const method = event.target.method.value;
+      const email=event.target.email.value;
+      let coupon="";
+      
+      if(JSON.parse(sessionStorage.getItem("coupon")))
+      { 
+          const couponDetail=JSON.parse(sessionStorage.getItem("coupon"));  
+          coupon=couponDetail.couponCode;
+                 
+      }
+     
 
       let cart =JSON.parse(localStorage.getItem("cart"));
         cart=cart.filter(item=>{
@@ -404,9 +490,11 @@ if (orderForm) {
             const dataFinal={
               fullName:fullName,
               phone:phone,
+              email:email,
               note:note,
               paymentMethod:method,
-              items:cart
+              items:cart,
+              coupon:coupon,
             }
             
             fetch(`/order/create`,{
@@ -805,7 +893,22 @@ const drawCart = () => {
           }, 0);
 
           //Tính giảm giá
-          const discount = 0;
+          let discount=0;
+          //Kiểm tra xem có tồn tại mã coupon không
+          if(JSON.parse(sessionStorage.getItem("coupon")))
+          {
+              const couponDetail=JSON.parse(sessionStorage.getItem("coupon"));
+              
+              const percent=couponDetail.percent;
+              const maximumPrice=couponDetail.maximumPrice;
+              discount = (subTotaldata/100*percent)>maximumPrice? maximumPrice:(subTotaldata/100*percent);
+             
+             
+              const discountHtml=document.querySelector("[coupon-price]");
+              discountHtml.innerHTML=`${discount.toLocaleString("vi-VN")}đ`;
+             
+          }
+        
           const totalPrice = subTotaldata - discount;
           //Hết  Tính giảm giá
 
@@ -902,3 +1005,82 @@ if (pageCart) {
   drawCart();
 }
 //End Page cart
+
+
+
+//Sử dụng mã coupon trong sessionStorage
+if(sessionStorage.getItem("coupon")&&JSON.parse(localStorage.getItem("cart")).length>0)
+{
+  const couponInput=document.querySelector("#coupon-input");
+  const couponDetail=JSON.parse(sessionStorage.getItem("coupon"));
+  couponInput.value=couponDetail.couponCode
+  document.querySelector("#coupon-form >button").click();
+  
+}
+//Sử dụng mã coupon trong sessionStorage
+
+
+//Không cho chọn ngày trong quá khứ
+ // Lấy ngày hiện tại ở định dạng YYYY-MM-DD
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Thêm '0' nếu tháng < 10
+  const day = today.getDate().toString().padStart(2, '0'); // Thêm '0' nếu ngày < 10
+  const todayFormatted = `${year}-${month}-${day}`;
+
+  // Đặt giá trị min cho input date
+  const inputDate=document.querySelector("[futureDate]");
+  if(inputDate)
+  {
+   
+    inputDate.setAttribute('min', todayFormatted);
+  }
+//Hết Không cho chọn ngày trong quá khứ
+
+
+
+
+
+//Tracking Form
+const trackingForm=document.querySelector("#tracking-form");
+if(trackingForm)
+{
+   const validation = new JustValidate("#tracking-form");
+
+  validation
+    .addField("#orderCode", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập mã đơn hàng!",
+      },
+    ])
+    .addField("#email", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập email của bạn!",
+      },
+      {
+        rule: "email",
+        errorMessage: "Email không đúng định dạng!",
+      },
+    ])
+    .addField("#phone", [
+      {
+        rule: "required",
+        errorMessage: "Vui lòng nhập số điện thoại!",
+      },
+      {
+        rule: "customRegexp",
+        value: /(84|0[3|5|7|8|9])+([0-9]{8})\b/g,
+        errorMessage: "Số điện thoại không đúng định dạng!",
+      },
+    ])
+    .onSuccess((event)=>{
+        const email=event.target.email.value;
+        const phone=event.target.phone.value;
+        const orderCode=event.target.orderCode.value;
+
+       window.location.href=`/tracking/detail?email=${email}&phone=${phone}&orderCode=${orderCode}`
+    })
+}
+//End Tracking Form

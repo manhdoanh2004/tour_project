@@ -678,12 +678,7 @@ if(orderEditForm) {
       const paymentStatus = event.target.paymentStatus.value;
       const status = event.target.status.value;
 
-      console.log(fullName);
-      console.log(phone);
-      console.log(note);
-      console.log(paymentMethod);
-      console.log(paymentStatus);
-      console.log(status);
+   
 
         const dataFinal={
           fullName:fullName,
@@ -1597,6 +1592,61 @@ if(filterReset) {
 }
 //End  Filter reset
 
+//Filter payment method
+const filterPaymentMethod=document.querySelector("[filter-payment-method]");
+if(filterPaymentMethod)
+{
+  const url=new URL(window.location.href);
+  filterPaymentMethod.addEventListener("change",()=>
+  {
+      const value=filterPaymentMethod.value;
+      if(value)
+      {
+        url.searchParams.set("paymentMethod",value);
+      }
+      else
+      {
+        url.searchParams.delete("paymentMethod");
+      }
+      window.location.href=url;
+  });
+
+  if(url.searchParams.get("paymentMethod"))
+  {
+    filterPaymentMethod.value=url.searchParams.get("paymentMethod")
+  }
+}
+
+//End Filter payment method
+
+
+//Filter payment status
+const filterPaymentStatus=document.querySelector("[filter-payment-status]");
+if(filterPaymentStatus)
+{
+  const url=new URL(window.location.href);
+  filterPaymentStatus.addEventListener("change",()=>
+  {
+      const value=filterPaymentStatus.value;
+      if(value)
+      {
+        url.searchParams.set("paymentStatus",value);
+      }
+      else
+      {
+        url.searchParams.delete("paymentStatus");
+      }
+      window.location.href=url;
+  });
+
+  if(url.searchParams.get("paymentStatus"))
+  {
+    filterPaymentStatus.value=url.searchParams.get("paymentStatus");
+  }
+}
+//End Filter payment status
+
+
 
 //Check-all
 
@@ -1676,6 +1726,7 @@ if(search)
   const url=new URL(window.location.href);
   search.addEventListener("keyup",(event)=>
   {
+   
     const url=new URL(window.location.href);
     if(event.code=='Enter')
     {
@@ -1701,6 +1752,8 @@ if(search)
 
 //End Search
 
+
+//Phân trang 
 const pagination=document.querySelector("[pagination]");
 if(pagination)
 {
@@ -1728,3 +1781,113 @@ if(pagination)
 }
 //Phân trang
 //Hết Phân trang
+
+
+
+//Không cho chọn ngày trong quá khứ
+ // Lấy ngày hiện tại ở định dạng YYYY-MM-DD
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = (today.getMonth() + 1).toString().padStart(2, '0'); // Thêm '0' nếu tháng < 10
+  const day = today.getDate().toString().padStart(2, '0'); // Thêm '0' nếu ngày < 10
+  const todayFormatted = `${year}-${month}-${day}`;
+
+  // Đặt giá trị min cho input date
+  const inputDate=document.querySelector("[futureDate]");
+  if(inputDate)
+  {
+   
+    inputDate.setAttribute('min', todayFormatted);
+  }
+//Hết Không cho chọn ngày trong quá khứ
+
+
+//Coupon-create-from
+const couponCreateFrom = document.querySelector("#coupon-create-form");
+if(couponCreateFrom) {
+  const validation = new JustValidate('#coupon-create-form');
+
+  validation
+    .addField('#name', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập tên sự kiện!'
+      },
+      {
+        rule: 'minLength',
+        value: 5,
+        errorMessage: 'tên phải có ít nhất 5 ký tự!',
+      },
+      {
+        rule: 'maxLength',
+        value: 50,
+        errorMessage: ' tên không được vượt quá 50 ký tự!',
+      },
+    ])
+    .addField('#code', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập số điện thoại!'
+      },
+      {
+        rule: 'minLength',
+        value: 5,
+        errorMessage: 'tên phải có ít nhất 5 ký tự!',
+      },
+    ])
+    .addField('#quantity', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập số lượng!'
+      },
+    ])
+    .addField('#percent', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập số phầm trăm giảm giá!'
+      },
+    ])
+    .addField('#maximumPrice', [
+      {
+        rule: 'required',
+        errorMessage: 'Vui lòng nhập  giảm tối đa!'
+      },
+    ])
+    .onSuccess((event) => {
+      
+      const name = event.target.name.value;
+      const code = event.target.code.value;
+      const quantity = event.target.quantity.value;
+      const percent = event.target.percent.value;
+      const maximumPrice = event.target.maximumPrice.value;
+      const expired = event.target.expired.value;
+
+   
+
+        const dataFinal={
+          name:name,
+          couponCode:code,
+          quantity:quantity,
+          percent:percent,
+          maximumPrice:maximumPrice,
+          expired:expired
+        }
+        console.log(dataFinal)
+        fetch(`/${pathAdmin}/coupon/create`,{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body:JSON.stringify(dataFinal)
+        })    
+          .then(res=>res.json())
+          .then(data=>{
+            if(data.code=="success") window.location.reload()
+            else alert(data.message)
+          })
+
+
+    })
+  ;
+}
+//EndCoupon-create-from

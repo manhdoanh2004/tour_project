@@ -1,0 +1,125 @@
+extends ../layouts/default.pug
+block main
+ main
+ .container
+    section#orders-section
+        h2 Đơn hàng của tôi
+        .orders-container
+         if(orderList.length > 0)
+          each orderDetail in orderList
+            article.order-item
+                .order-header
+                    h3 Đơn hàng #{orderDetail.orderCode}
+                    p.order-status
+                        | Trạng thái:
+                        if(orderDetail.status=='initial')
+                         span.status-pending #{orderDetail.orderStatusName}
+                        else if(orderDetail.status=='done')
+                         span.status-delivered #{orderDetail.orderStatusName}
+                        if(orderDetail.status=='cancel')
+                         span.status-cancelled #{orderDetail.orderStatusName}
+                .order-details
+                    p
+                        strong Ngày đặt hàng:
+                        |  #{orderDetail.createdAtFormat}
+                    p
+                        strong Tạm tính:
+                        |  #{orderDetail.subTotal.toLocaleString("vi-VN")} VNĐ
+                    p
+                        strong Giảm giá:
+                        |  #{orderDetail.discount.toLocaleString("vi-VN")} VNĐ
+                    p
+                        strong Tổng tiền:
+                        |  #{orderDetail.total.toLocaleString("vi-VN")} VNĐ
+                    h4 Các tour đã đặt :
+                    ul.product-list
+                     if(orderDetail.items)
+                       each item in orderDetail.items
+                        li
+                            .product-title
+                                span.product-name #{item.name}
+                                .product-image
+                                 a(href=`/tour/detail/${orderDetail.slug}`)
+                                    img(
+                                        alt="" 
+                                        src=item.avatar
+                                        )
+                            .product-priceList
+                                .product-priceItem
+                                        span Người lớn :
+                                        span.product-quantity x #{item.quantityAdult}
+                                        span.product-price  #{item.priceNewAdult.toLocaleString("vi-VN")} VNĐ
+                                .product-detailItem
+                                      span Trẻ em :
+                                      span.product-quantity x #{item.quantityChildren}
+                                      span.product-price  #{item.priceNewChildren.toLocaleString("vi-VN")} VNĐ
+                                .product-detailItem
+                                     span Em bé  :
+                                     span.product-quantity x #{item.quantityBaby}
+                                     span.product-price  #{item.priceNewBaby.toLocaleString("vi-VN")} VNĐ
+                        p.order-note Ghi chú:  #{orderDetail.note}
+                        //- .order-footer
+                        //-     a.btn-view-detail(href="#") Xem chi tiết
+                        //-     if(orderDetail.status!="cancel" && orderDetail.status!="done")
+                        //-      button.btn-cancel-order Hủy đơn hàng
+            //- article.order-item
+            //-     header.order-header
+            //-         h3 Đơn hàng #DH202507001
+            //-         p.order-status
+            //-             | Trạng thái:
+            //-             span.status-delivered Đã giao hàng
+            //-     .order-details
+            //-         p
+            //-             strong Ngày đặt hàng:
+            //-             | 05/07/2025
+            //-         p
+            //-             strong Tổng tiền:
+            //-             | 550.000 VNĐ
+            //-         p
+            //-             strong Địa chỉ giao hàng:
+            //-             | 123 Đường ABC, Phường X, Quận Y, Thành phố Z
+            //-         h4 Các sản phẩm trong đơn hàng:
+            //-         ul.product-list
+            //-             li
+            //-                 span.product-name Áo Thun Nam Cotton
+            //-                 span.product-quantity x 2
+            //-                 span.product-price 200.000 VNĐ
+            //-             li
+            //-                 span.product-name Quần Jean Nữ Slim Fit
+            //-                 span.product-quantity x 1
+            //-                 span.product-price 350.000 VNĐ
+            //-             p.order-note **Ghi chú:** Vui lòng giao hàng vào buổi tối.
+            //-             footer.order-footer
+            //-                 a.btn-view-detail(href="#") Xem chi tiết
+                            
+            //- article.order-item
+            //-     header.order-header
+            //-         h3 Đơn hàng #DH202507001
+            //-         p.order-status
+            //-             | Trạng thái:
+            //-             span.status-cancelled Đã hủy
+            //-     .order-details
+            //-         p
+            //-             strong Ngày đặt hàng:
+            //-             | 05/07/2025
+            //-         p
+            //-             strong Tổng tiền:
+            //-             | 550.000 VNĐ
+            //-         p
+            //-             strong Địa chỉ giao hàng:
+            //-             | 123 Đường ABC, Phường X, Quận Y, Thành phố Z
+            //-         h4 Các sản phẩm trong đơn hàng:
+            //-         ul.product-list
+            //-             li
+            //-                 span.product-name Áo Thun Nam Cotton
+            //-                 span.product-quantity x 2
+            //-                 span.product-price 200.000 VNĐ
+            //-             li
+            //-                 span.product-name Quần Jean Nữ Slim Fit
+            //-                 span.product-quantity x 1
+            //-                 span.product-price 350.000 VNĐ
+            //-             p.order-note **Ghi chú:** Vui lòng giao hàng vào buổi tối.
+            //-             footer.order-footer
+            //-                 a.btn-view-detail(href="#") Xem chi tiết
+         else
+            p(style="text-align: center; font-size: 20px;") Bạn chưa đặt đơn hàng nào!                   

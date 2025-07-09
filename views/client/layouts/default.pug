@@ -35,6 +35,7 @@ html(lang="vi")
         include ../partials/header.pug
         
         block main
+        <div class="gtranslate_wrapper"></div>
         include ../partials/footer.pug
 
         script(src="https://unpkg.com/aos@2.3.1/dist/aos.js")
@@ -44,4 +45,6 @@ html(lang="vi")
           src="https://cdn.jsdelivr.net/npm/just-validate@4.3.0/dist/just-validate.production.min.js"
           )
         script(src="/assets/js/script.js")
+        <script>window.gtranslateSettings = {"default_language":"vi","native_language_names":true,"detect_browser_language":true,"languages":["vi","en"],"wrapper_selector":".gtranslate_wrapper"}</script>
+        <script src="https://cdn.gtranslate.net/widgets/latest/float.js" defer></script>
         

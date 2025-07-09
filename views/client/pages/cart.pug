@@ -29,7 +29,7 @@ block main
             span đ
         .inner-item
           .inner-label Giảm:
-          .inner-price -0đ
+          .inner-price(coupon-price) -0đ
         .inner-item
           .inner-label Thanh toán:
           .inner-price-highlight 
@@ -49,6 +49,12 @@ block main
               input#full-name-input(
                 placeholder="Họ và tên" 
                 name="fullName" 
+                type="text"
+                )
+            .inner-input
+              input#email-input(
+                placeholder="Email" 
+                name="email" 
                 type="text"
                 )
             .inner-input
@@ -102,9 +108,9 @@ block main
               label(for="methodBank") Chuyển khoản ngân hàng
           .inner-info-bank
             .inner-title Thông tin chuyển khoản
-            .inner-text Ngân hàng : Vietcombank
-            .inner-text Tên tài khoản: Le Van A
-            .inner-text STK: 0123456789
+            .inner-text Ngân hàng : Mb Bank
+            .inner-text Tên tài khoản: TA MANH DOANH
+            .inner-text STK: 0967356675
         .inner-button
           button(type="submit") ĐẶT TOUR
     // End Section 12

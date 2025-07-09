@@ -1,6 +1,7 @@
 const mongoose=require("mongoose");
 const schema= new mongoose.Schema({
     fullName:String,
+    email:String,
     phone:String,
     note:String,
     items:Array,
@@ -17,7 +18,11 @@ const schema= new mongoose.Schema({
     deletedAt:Date,
     paymentStatus:String,
     orderCode:String,
-    discount:String
+    discount:{
+        type:Number,
+        default:0
+    },
+    coupon:String
 
 },
 {

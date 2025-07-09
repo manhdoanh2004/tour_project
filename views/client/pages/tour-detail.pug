@@ -85,7 +85,7 @@ block main
             label.inner-label Số Lượng Hành Khách
             .inner-list
               .inner-item
-                .inner-item-label Người lớn:
+                .inner-item-label Người lớn > 12 tuổi :
                 .inner-item-input
                   input(
                     value="1" 
@@ -100,7 +100,7 @@ block main
                   span x
                   span.inner-highlight #{tourDetail.priceNewAdult.toLocaleString("vi-VN")}
               .inner-item
-                .inner-item-label Trẻ em:
+                .inner-item-label Trẻ em 2 - 12 tuổi :
                 .inner-item-input
                   input(
                     value="0" 
@@ -115,7 +115,7 @@ block main
                   span x
                   span.inner-highlight #{tourDetail.priceNewChildren.toLocaleString("vi-VN")}
               .inner-item
-                .inner-item-label Em bé:
+                .inner-item-label Em bé < 2 tuổi :
                 .inner-item-input
                   input(
                     value="0" 

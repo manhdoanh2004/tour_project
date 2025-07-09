@@ -12,7 +12,8 @@ const schema=new mongoose.Schema({
         default:"Nhân viên"
     }
     ,
-    avatar:String
+    avatar:String,
+    deleted:false
 });
 
 const accountAdmin=mongoose.model('accountAdmin',schema,'account-admin');

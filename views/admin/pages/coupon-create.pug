@@ -1,0 +1,34 @@
+extends ../layouts/default.pug
+
+
+block main
+  h1.box-title Tạo phiếu giảm giá
+  if (permissions.includes("coupon-create"))
+    .section-8
+      form#coupon-create-form
+        .inner-group
+          label(class="inner-label" for="name") Tên sự kiện
+          input(type="text" id="name" name="name")
+        .inner-group
+          label(class="inner-label" for="code") Mã coupon
+          input(type="text" id="code" name="code")
+        .inner-group
+          .inner-input-list
+            .inner-input-item
+              label Số lượng 
+              input(type="number"  max="100" min="0" id="quantity" name="quantity")
+        .inner-group
+          .inner-input-list
+            .inner-input-item
+              label % Giảm giá 
+              input(type="number" max="100" min="0" id="percent" name="percent")
+        .inner-group
+          label(class="inner-label" for="maximumPrice") Giảm tối đa
+          input(type="number"  max="100" min="0" id="maximumPrice" name="maximumPrice")
+        .inner-group
+          label(class="inner-label" for="expired") Ngày hết hạn
+          input(type="date" id="expired" name="expired" futureDate)
+        .inner-button.inner-two-col
+          button Tạo mới
+      .inner-back
+        a(href=`/${pathAdmin}/coupon/list`) Quay lại danh sách

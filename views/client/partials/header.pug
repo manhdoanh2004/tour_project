@@ -31,10 +31,23 @@ header.header
             )
           h1() #{settingWebsiteInfo.websiteName}
       // Menu
+      -
+        var test=[{
+          link:"#",
+          title:"Tour đã đặt"
+        },
+        {
+          link:"#",
+          title:"Tour đã đặt"
+        },
+        {
+          link:"#",
+          title:"Tour đã đặt"
+        }]
       nav.inner-menu
         ul
           li
-            a.active(href="/") Trang chủ
+            a.active(href="/" style="max-width: 200px;") Trang chủ            
           each item in categoryList
             li
               a(href=`/category/${item.slug}`) #{item.name}
@@ -45,9 +58,18 @@ header.header
                     li
                       a(href=`/category/${itemChild.slug}`) #{itemChild.name}
           li
-              a(href="#") Tin tức
+              a(href="/infor") Tin tức
           li
-              a(href="#") Liên hệ
+              a(href="/contact") Liên hệ
+          li
+              a(href="/tracking?type=tourOrder") Tra cứu
+              if(trackingTypes)
+                i.fa-solid.fa-caret-down
+                ul
+                  each itemChild in trackingTypes
+                    li
+                      a(href=itemChild.link) #{itemChild.title}
+        .inner-overlay
       // Cart
       .inner-cart
         a(href=`/cart`)

@@ -3,6 +3,12 @@
 :root {
   --color-primary: #4880FF;
   --color-text: #202224;
+  --primary-red: #d12c2a;
+  --secondary-red: #ee4e4a;
+  --text-dark: #333;
+  --text-light: #fff;
+  --border-grey: #ccc;
+  --bg-light-grey: #f5f5f5;
 }
 
 * {
@@ -1615,3 +1621,5 @@ a {
   background-color: #a3e0a3;
 }
 /* End Alert */
+
+

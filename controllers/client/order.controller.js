@@ -1,8 +1,10 @@
 const Tour = require("../../models/tour.model");
 const Order=require("../../models/order.model");
-const City=require("../../models/city.model")
+const City=require("../../models/city.model");
+const Coupon=require("../../models/coupon.model");
 
 const generateHelper=require("../../helpers/generate.helper")
+const mailHelper = require("../../helpers/mail.helper");
 const sortHelper=require("../../helpers/sort.helper")
 const variableHelper=require("../../config/variable");
 const moment=require("moment");
@@ -43,13 +45,13 @@ module.exports.create = async (req, res) => {
 
         //Cập nhật lại số lượng hành khách còn lại của tour
         if (
-          tourInfor.stockAdult < item.quantityAdult ||
-          tourInfor.stockChildren < item.quantityChildren ||
-          tourInfor.stockBaby < item.quantityBaby
+          tourInfor.stockAdult <= item.quantityAdult ||
+          tourInfor.stockChildren <= item.quantityChildren ||
+          tourInfor.stockBaby <= item.quantityBaby
         ) {
           return res.json({
             code: "error",
-            message: `Số lượng chỗ của tour ${tourInfor.name} vui lòng chọn lại!`,
+            message: `Số lượng chỗ của ${tourInfor.name} không đủ vui lòng chọn lại!`,
           });
         }
         await Tour.updateOne(
@@ -75,9 +77,38 @@ module.exports.create = async (req, res) => {
       );
     }, 0);
 
-    //Giảm giá
-    req.body.discount = 0;
+    //Lấy thông tin mã giảm giá 
+    if(req.body.coupon)
+    {
+    const couponDetail=await Coupon.findOne({
+          couponCode:req.body.coupon
+        });
 
+          if(couponDetail.quantity<1)
+          {
+            return res.json({
+              code:"error",
+              message:"Mã giảm giá đã hết hạn. Vui lòng nhập mã khác!"
+            })
+          }
+        //Cập nhập lại số lượng mã giảm giá
+        await Coupon.updateOne({
+          _id:couponDetail.id,
+          couponCode:couponDetail.couponCode
+        },{
+          quantity:couponDetail.quantity-1
+        });
+      //Hết Cập nhập lại số lượng mã giảm giá
+       //Giảm giá
+        const percent=couponDetail.percent;
+        const maximumPrice=couponDetail.maximumPrice;
+        req.body.discount = (req.body.subTotal/100*percent)>maximumPrice? maximumPrice:(req.body.subTotal/100*percent);
+    }
+    else
+    {
+      req.body.discount=0;
+    }
+  
     //Thanh toán
     req.body.total = req.body.subTotal - req.body.discount;
 
@@ -87,11 +118,72 @@ module.exports.create = async (req, res) => {
     //Trạng thái đơn hành
     req.body.status = "initial"; //inital :khởi tạo, done :hoàn thành , cancel :hủy
 
-   
+    
+
 
     const newOrder= new Order(req.body)
     await newOrder.save();
 
+    //Lấy ra đơn hàng vừa lưu
+     const orderDetail=await Order.findOne({
+          _id:newOrder.id,
+          orderCode:req.body.orderCode,
+          phone:req.body.phone,
+            
+        })
+        if(!orderDetail)
+        {
+          
+           return res.json({
+            code:"error",
+            message:"Đặt tour không thành công!"
+           })
+        }
+      
+
+        orderDetail.paymentMethodName=variableHelper.paymentMethod.find(item=>item.value==orderDetail.paymentMethod);
+        orderDetail.paymentStatusName=variableHelper.paymentStatus.find(item=>item.value==orderDetail.paymentStatus);
+        orderDetail.orderStatusName=variableHelper.orderStatus.find(item=>item.value==orderDetail.status);
+        orderDetail.createAtFormat=moment(orderDetail.createdAt).format("HH:mm - DD/MM/YYYY")
+          for (const item of orderDetail.items) {
+            const infoTour = await Tour.findOne({
+                _id: item.tourId,
+                deleted: false
+            })
+
+            if(infoTour) {
+                item.slug = infoTour.slug;
+            }
+
+            item.departureDateFormat = moment(item.departureDate).format("DD/MM/YYYY");
+
+            const city = await City.findOne({
+                _id: item.locationFrom
+            })
+
+            if(city) {
+                item.locationFromName = city.name;
+            }
+
+         }
+    //Hết Lấy ra đơn hàng vừa lưu
+
+    //Gửi mã OPT qua email cho người dùng
+    const subject = "XÁC NHẬN ĐẶT TOUR";
+    const content = `Cảm ơn quý khách đã đặt tour! Chúng tôi sẽ liên hệ lại với quý khách trong thời gian sớm nhất.
+                      <b style=' color : green'>Thông tin đơn hàng</b> .
+                  ID của đơn hàng :<b style=' color : green'>${orderDetail.id}</b>
+                  Mã đơn hàng:   <b style=' color : green'>${orderDetail.orderCode}</b>
+                  Tên khách hàng: ${orderDetail.fullName}
+                  Số điện thoại: ${orderDetail.phone}
+                  Ghi chú:${orderDetail.note}
+                  Phương thức thanh toán: ${orderDetail.paymentMethodName.label}
+                  Trạng thái thanh toán: ${ orderDetail.paymentStatusName.label}
+                  Trạng thái đơn hàng: ${orderDetail.orderStatusName.label}
+                  Ngày đặt: ${orderDetail.createAtFormat}`;
+
+    mailHelper.sendMail(orderDetail.email, content, subject);
+     //Hết Gửi mã OPT qua email cho người dùng
 
     res.json({
       code: "success",
@@ -161,7 +253,7 @@ module.exports.success=async(req,res)=>
 
          }
 
-
+        
        res.render("client/pages/order-success.pug",
         {
             pageTitle:"Đặt hàng thành công",

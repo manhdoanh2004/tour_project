@@ -45,3 +45,28 @@ module.exports.orderStatus=[
         value:"cancel"
     },
 ]
+module.exports.orderStatusClient=[
+    {
+        label:"Đang xử lý",
+        value:"initial"
+    },
+       {
+        label:"Đã hoàn thành",
+        value:"done"
+    },   {
+        label:"Đã hủy ",
+        value:"cancel"
+    },
+]
+
+
+module.exports.trackingType=[
+    {
+        link:"/tracking?type=tourOrder",
+        title:"Tour đã đặt",
+        value:"tourOrder"
+    },
+
+ 
+
+]

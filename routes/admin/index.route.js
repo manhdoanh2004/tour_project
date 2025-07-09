@@ -1,5 +1,6 @@
 const router=require("express").Router();
 
+const settingWebsite=require("../../middlewares/admin/setting-website.middleware");
 const accountRoute=require("./account.route");
 const dashboardRoute=require("./dashboard.route");
 const categoryRoute=require("./category.route");
@@ -10,11 +11,11 @@ const contactRoute=require("./contact.route");
 const settingRoute=require("./setting.route");
 const profileRoute=require("./profile.route");
 const uploadRoutes=require("./upload.route");
-
+const couponRoutes=require("./coupon.route");
 
 const authMiddlewares=require("../../middlewares/admin/auth.middleware")
 
-
+router.use(settingWebsite.webSiteInfo);
 //Xóa bộ nhớ đệm
 // router.use((req,res,next)=>
 // {
@@ -32,6 +33,7 @@ router.use("/contact",authMiddlewares.verifyToken,contactRoute);
 router.use("/setting",authMiddlewares.verifyToken,settingRoute);
 router.use("/profile",authMiddlewares.verifyToken,profileRoute);
 router.use("/upload",authMiddlewares.verifyToken,uploadRoutes);
+router.use("/coupon",authMiddlewares.verifyToken,couponRoutes);
 
 router.get("*",authMiddlewares.verifyToken,(req,res)=>
 {

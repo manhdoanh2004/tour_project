@@ -1,0 +1,32 @@
+extends ../layouts/default.pug
+block main
+ main
+ .section-12
+  .container
+    .inner-wrap(style="margin-top:50px;")
+      form#tracking-form(action="")
+        .inner-info
+          .inner-title-main Xem tour đã đặt
+          .inner-inputs
+            .inner-input
+              input#orderCode(
+                placeholder="Mã đơn hàng" 
+                name="orderCode" 
+                type="text"
+                )
+          .inner-inputs
+            .inner-input
+              input#email(
+                placeholder="Email" 
+                name="email" 
+                type="text"
+                )
+            .inner-input
+              input#phone(
+                placeholder="Số điện thoại" 
+                name="phone" 
+                type="text"
+                )
+        .inner-button
+          button(type="submit") Tra cứu
+    // End Section 12

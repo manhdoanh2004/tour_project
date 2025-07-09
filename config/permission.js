@@ -121,6 +121,15 @@ module.exports.permissionList = [
       label: "Xóa  nhóm quyền",
       value: "setting-role-delete"
     },
+    {
+      label: "Xem danh sách phiếu giảm giá",
+      value: "coupon-list"
+    },
+    {
+      label: "Tạo phiếu giảm giá",
+      value: "coupon-create"
+    },
+   
    
   ];
   

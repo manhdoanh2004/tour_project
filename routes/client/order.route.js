@@ -1,8 +1,8 @@
 const router=require("express").Router();
 const orderController=require("../../controllers/client/order.controller");
+const orderValidate=require("../../validates/client/order.validate");
 
-
-router.post("/create",orderController.create);
+router.post("/create",orderValidate.createPost,orderController.create);
 router.get("/success",orderController.success);
 
 router.get("/payment-zalopay",orderController.paymentZalopay);
